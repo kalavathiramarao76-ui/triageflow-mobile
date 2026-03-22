@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'providers/triage_provider.dart';
@@ -7,14 +8,13 @@ import 'providers/favorites_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/splash_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const TriageFlowApp());
 }
-
 class TriageFlowApp extends StatelessWidget {
   const TriageFlowApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -38,7 +38,6 @@ class TriageFlowApp extends StatelessWidget {
       ),
     );
   }
-
   ThemeData _buildDarkTheme() {
     return ThemeData(
       useMaterial3: true,
@@ -49,12 +48,10 @@ class TriageFlowApp extends StatelessWidget {
         color: const Color(0xFF161B22),
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFF0D1117),
         elevation: 0,
         centerTitle: true,
-      ),
       textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -64,27 +61,8 @@ class TriageFlowApp extends StatelessWidget {
           borderSide: const BorderSide(color: Color(0xFF30363D)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF30363D)),
-        ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFF00C853), width: 2),
-        ),
-      ),
-    );
-  }
-
   ThemeData _buildLightTheme() {
-    return ThemeData(
-      useMaterial3: true,
       brightness: Brightness.light,
-      colorSchemeSeed: const Color(0xFF00C853),
-      cardTheme: CardTheme(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
       textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
-    );
-  }
-}

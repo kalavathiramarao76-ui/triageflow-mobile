@@ -6,13 +6,34 @@ import '../utils/constants.dart';
 import '../providers/triage_provider.dart';
 import '../providers/incident_provider.dart';
 import '../providers/favorites_provider.dart';
+import '../widgets/auth_wall.dart';
+import '../services/auth_service.dart';
 import 'triage_screen.dart';
 import 'incidents_screen.dart';
 import 'favorites_screen.dart';
 import 'settings_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final AuthService _authService = AuthService();
+  bool _showAuthWall = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuth();
+  }
+
+  Future<void> _checkAuth() async {
+    final needsAuth = await _authService.needsAuth();
+    if (mounted) setState(() => _showAuthWall = needsAuth);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +43,9 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: Stack(
+        children: [
+          SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -295,6 +318,13 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+          if (_showAuthWall)
+            AuthWall(
+              authService: _authService,
+              onSignedIn: () => setState(() => _showAuthWall = false),
+            ),
+        ],
       ),
     );
   }
